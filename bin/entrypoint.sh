@@ -7,7 +7,7 @@ set -o nounset
 main() {
 	echo "$CRONTAB" > crontab
 	echo "$CONFIG_JSON" > config.json
-    echo "${CONFIG_RCLONE:-}" > rclone
+	echo "${CONFIG_RCLONE:-}" > rclone
 
 	./supercronic /app/crontab 2>&1
 }

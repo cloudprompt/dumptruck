@@ -6,7 +6,7 @@ applications:
     no-route: true
     health-check-type: process
     docker:
-      image: meshcloud/dumptruck
+      image: cloudprompt/dumptruck
     services:
       - mydb-mongodb
       - mydb-mysql

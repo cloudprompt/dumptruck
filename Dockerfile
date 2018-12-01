@@ -15,7 +15,7 @@ RUN wget "https://downloads.rclone.org/rclone-current-linux-amd64.deb" \
 
 COPY bin/ /app
 
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install requests
 
 WORKDIR /app
 CMD [ "/app/entrypoint.sh" ]
