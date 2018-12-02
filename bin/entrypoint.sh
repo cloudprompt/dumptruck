@@ -5,9 +5,8 @@ set -o pipefail
 set -o nounset
 
 main() {
-  
-  if [ ${CREATECONFIGS:-} ]
-then
+
+if [ "$CREATECONFIGS"="true" ]; then
   echo "$CRONTAB" > crontab
   echo "${CONFIG_RCLONE:-}" > rclone
 
@@ -21,8 +20,8 @@ then
   ./jq -s '.[0]*.[1]' *.json > config.json
 
   ./supercronic /app/crontab 2>&1
-  
-  fi
+fi
+
 }
 
 main "$@"
