@@ -87,11 +87,11 @@ def restore(name, file, encryption, sources, storage, **_):
     for store in storage:
         try:
             if store["type"] == "swift":
-		print("[swift storage] Attempting to connect.")
+                print("[swift storage] Attempting to connect.")
                 token = swift.auth(**store)
-		print("[swift storage] token:"+token)
+                print("[swift storage] token:"+token)
                 ret = swift.save_object(token, store["container_url"], file, ".")
-		print("[swift storage] save local status:"+ret)
+                print("[swift storage] save local status:"+ret)
             else:
                 rclone.save_object(store["remote"], store["target"], file, ".")
             break
