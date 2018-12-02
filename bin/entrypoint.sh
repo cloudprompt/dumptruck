@@ -6,6 +6,8 @@ set -o nounset
 
 main() {
   
+  if [ ${CREATECONFIGS:-} ]
+then
   echo "$CRONTAB" > crontab
   echo "${CONFIG_RCLONE:-}" > rclone
 
@@ -18,8 +20,9 @@ main() {
   ### merge all JSON files to one (expecting exactly two files !)
   ./jq -s '.[0]*.[1]' *.json > config.json
 
-
   ./supercronic /app/crontab 2>&1
+  
+  fi
 }
 
 main "$@"
