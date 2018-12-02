@@ -13,7 +13,7 @@ main() {
   #echo "$ENCRYPTION" > encryption.json
   echo "$STORAGE" > storage.json
 
-  echo $VCAP_SERVICES | ./jq '{encryption:$ENV.ENCKEY, sources: [ (foreach ."osb-postgresql"[] as $db (1; { name:$db.name, dbtype:"postgres", host: $db.credentials.uri | match("@(.*?):").captures[0].string, database:$db.credentials.database, username:$db.credentials.user, password:$db.credentials.password, keep:$ENV.KEEPBACKUPS }))]}' > sources.json
+  echo $VCAP_SERVICES | ./jq '{encryption:$ENV.ENCKEY, sources: [ (foreach ."osb-postgresql"[] as $db (1; { name:$db.name, dbtype:"postgres", host: $db.credentials.uri | match("@(.*?):").captures[0].string, database:$db.credentials.database, username:$db.credentials.user, password:$db.credentials.password }))]}' > sources.json
 
   ### merge all JSON files to one (expecting exactly two files !)
   ./jq -s '.[0]*.[1]' *.json > config.json

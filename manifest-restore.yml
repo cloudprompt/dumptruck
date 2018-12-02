@@ -1,0 +1,57 @@
+---
+applications:
+ - name: dumptruck
+   memory: 128M
+   disk_quota: 2G
+   no-route: true
+   health-check-type: process
+   services:
+     - restoretest
+     - lst_main
+     - lst_personal
+     - lst_control
+   docker:
+     image: cloudprompt/dumptruck
+   env:
+     CRONTAB: >-
+       ### For Restores
+       # */5 * * * * /app/dumptruck.py /app/config.json restoretest lst_control.20181202-1220.gz.enc
+       ### For Backups (Once per hour)
+       0 * * * * /app/dumptruck.py /app/config.json
+     ENCKEY: >-
+       supersecret
+     KEEPBACKUPS: >-
+       168
+     STORAGE: |
+       {
+         "storage": [
+           {
+             "type": "swift",
+             "auth_url": "https://os.eu-de-darz.msh.host:5000/v3",
+             "username": "ZnQEXo405u",
+             "user_domain_id": "306b7c42140e4e87b91005b8c1822c0e",
+             "password": "ClRu0LVT0Nc4ZfuoOa8Xpaom",
+             "project_id": "c816996d45df4f098e8a4250bdab2aa8",
+             "container_url": "https://swift.os.eu-de-darz.msh.host/swift/v1/BackupsOfLive"
+           },
+            {
+              "type: "rclone",
+              "remote: "2kscsSSnet",
+              "target: "backups"
+            }
+         ],
+         "monitor": { 
+           "url": "https://ourpushgateway/",
+           "username": "push",
+           "password": "********"
+         }
+       }
+     CONFIG_RCLONE: |
+       [2kscsSSnet]
+       type = sftp
+       host = 2kscs.serverstage.net
+       user = serverstagedumptruck
+       pass = -4SlFV3ETpR_8o1qug4TX6tClcT9LRT2ctE
+       port = 22
+
+
