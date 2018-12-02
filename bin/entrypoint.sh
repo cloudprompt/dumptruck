@@ -6,7 +6,7 @@ set -o nounset
 
 main() {
 
-if [ "$CREATECONFIGS"="true" ]; then
+if [ "${CREATECONFIGS}"="true" ]; then
   echo "$CRONTAB" > crontab
   echo "${CONFIG_RCLONE:-}" > rclone
 
