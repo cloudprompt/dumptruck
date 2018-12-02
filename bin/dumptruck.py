@@ -114,7 +114,7 @@ def restore(name, file, encryption, sources, storage, **_):
         cmd.append(tunnel)
     subprocess.check_call(cmd)
 
-    remove_files()
+    #remove_files()
 
 
 def main():
