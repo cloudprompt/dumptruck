@@ -6,7 +6,6 @@ set -o nounset
 
 main() {
 
-if [ "${CREATECONFIGS}"="true" ]; then
   echo "$CRONTAB" > crontab
   #echo "${CONFIG_RCLONE:-}" > rclone
 
@@ -26,7 +25,6 @@ if [ "${CREATECONFIGS}"="true" ]; then
   ./jq -s '.[0]*.[1]' *.json > config.json
 
   ./supercronic /app/crontab 2>&1
-fi
 
 }
 
