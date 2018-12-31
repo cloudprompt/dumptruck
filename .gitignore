@@ -1,4 +1,5 @@
 manifest-restore.yml
+manifest*.yml
 manifest.yml
 *.json
 key
