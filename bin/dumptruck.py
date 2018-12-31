@@ -5,6 +5,7 @@ import os
 import os.path
 import subprocess
 import sys
+import traceback
 from glob import glob
 
 import requests
@@ -19,6 +20,7 @@ ROOT = os.path.dirname(os.path.realpath(__file__))
 def backup_all(encryption, sources, storage, monitor=None):
     for source in sources:
         try:
+            print("Backing up", source["name"], "...")
             backup(encryption, source, storage)
             if monitor:
                 notify(source, **monitor)
@@ -26,6 +28,7 @@ def backup_all(encryption, sources, storage, monitor=None):
         # Catch all so that one failed backup doesn't stop all others from happening
         except Exception as e:
             print("Backup failed with:", e)
+            traceback.print_exc()
 
         finally:
             remove_files()
@@ -33,6 +36,7 @@ def backup_all(encryption, sources, storage, monitor=None):
 
 def backup(encryption, source, storage):
     path = dump(encryption, **source)
+    print("Backup completed:", path)
 
     for store in storage:
         if store["type"] == "swift":
@@ -87,11 +91,8 @@ def restore(name, file, encryption, sources, storage, **_):
     for store in storage:
         try:
             if store["type"] == "swift":
-                print("[swift storage] Attempting to connect.")
                 token = swift.auth(**store)
-                print("[swift storage] token:"+token)
-                ret = swift.save_object(token, store["container_url"], file, ".")
-                print("[swift storage] save local status:"+ret)
+                swift.save_object(token, store["container_url"], file, ".")
             else:
                 rclone.save_object(store["remote"], store["target"], file, ".")
             break
@@ -114,7 +115,7 @@ def restore(name, file, encryption, sources, storage, **_):
         cmd.append(tunnel)
     subprocess.check_call(cmd)
 
-    #remove_files()
+    remove_files()
 
 
 def main():
@@ -125,6 +126,11 @@ def main():
     if len(sys.argv) == 2:
         backup_all(**config)
 
+    elif len(sys.argv) == 3:
+        name = sys.argv[2]
+        config["sources"] = list(filter(lambda x: x["name"] == name, config["sources"]))
+        backup_all(**config)
+
     elif len(sys.argv) == 4:
         name = sys.argv[2]
         dump = sys.argv[3]
@@ -133,6 +139,7 @@ def main():
     else:
         print(
             "Usage: {} <config.json>  perform database backups according to <config.json>\n",
+            "or     {} <config.json> <source_name> perform a single database backup according to <config.json>\n",
             "or     {} <config.json> <source_name> <dump>  takes settings from <config.json> and downloads <dump> from a storage provider and tries to restore it to the database with name <source>"
         )
 
