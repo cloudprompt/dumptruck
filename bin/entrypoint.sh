@@ -7,13 +7,11 @@ set -o nounset
 main() {
 
   echo "$CRONTAB" > crontab
-  echo "${CONFIG_RCLONE:-}" > rclone
-
-  ### copy the required environment variables to JSON files
-  #echo "$ENCRYPTION" > encryption.json
   echo "$STORAGE" > storage.json
   
-  echo -e '[LiveSwift]' > rclone
+  echo "${CONFIG_RCLONE:-}" > rclone
+
+  echo -e '[LiveSwift]' >> rclone
   echo $VCAP_SERVICES | ./jq --raw-output 'foreach ."user-provided"[].credentials as $swift (1; {type:"swift", user:$swift.OS_USERNAME, key:$swift.OS_PASSWORD, auth:$swift.OS_AUTH_URL, tenant_id:$swift.OS_PROJECT_ID, domain:$ENV.SWIFTDOMAIN, storage_url:$ENV.SWIFTSTORAGEURL}) | to_entries | map("\(.key)=\(.value)") | .[]' >> rclone
   
   echo -e '[Backup]' >> rclone
